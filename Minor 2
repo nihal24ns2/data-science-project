@@ -1,0 +1,104 @@
+# ---------------------------------------------
+# PRODUCT PRICE COMPARISON PROJECT
+# ---------------------------------------------
+
+# Import required libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# ---------------------------------------------
+# Step 1: Load Dataset (Downloaded from Kaggle)
+# ---------------------------------------------
+# Dataset file name example:
+# flipkart_com-ecommerce_sample.csv
+
+df = pd.read_csv("flipkart_com-ecommerce_sample.csv")
+
+print("Dataset Loaded Successfully")
+print(df.head())
+
+# ---------------------------------------------
+# Step 2: Data Cleaning
+# ---------------------------------------------
+
+# Select required columns
+df = df[['product_name', 'brand', 'retailer', 'discounted_price']]
+
+# Rename columns for simplicity
+df.columns = ['Product', 'Brand', 'Seller', 'Price']
+
+# Remove commas from price and convert to numeric
+df['Price'] = df['Price'].astype(str).str.replace(',', '')
+df['Price'] = pd.to_numeric(df['Price'], errors='coerce')
+
+# Remove rows with missing values
+df.dropna(inplace=True)
+
+print("\nCleaned Data:")
+print(df.head())
+
+# ---------------------------------------------
+# Step 3: Filtering Product
+# ---------------------------------------------
+
+# Product to compare (you can change this)
+product_name = "iPhone"
+
+filtered_df = df[df['Product'].str.contains(product_name, case=False)]
+
+print(f"\nFiltered Products for '{product_name}':")
+print(filtered_df)
+
+# ---------------------------------------------
+# Step 4: Basic Statistics
+# ---------------------------------------------
+
+min_price = filtered_df['Price'].min()
+max_price = filtered_df['Price'].max()
+avg_price = filtered_df['Price'].mean()
+
+print("\nPrice Statistics:")
+print("Minimum Price:", min_price)
+print("Maximum Price:", max_price)
+print("Average Price:", round(avg_price, 2))
+
+# ---------------------------------------------
+# Step 5: Cheapest and Most Expensive Seller
+# ---------------------------------------------
+
+cheapest_seller = filtered_df.loc[filtered_df['Price'].idxmin()]
+expensive_seller = filtered_df.loc[filtered_df['Price'].idxmax()]
+
+print("\nCheapest Seller:")
+print(cheapest_seller)
+
+print("\nMost Expensive Seller:")
+print(expensive_seller)
+
+# ---------------------------------------------
+# Step 6: Price Comparison Visualization
+# ---------------------------------------------
+
+plt.figure(figsize=(10, 5))
+sns.barplot(x='Seller', y='Price', data=filtered_df)
+plt.title(f'Price Comparison of {product_name}')
+plt.xlabel('Seller')
+plt.ylabel('Price')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+# ---------------------------------------------
+# Step 7: Price Distribution Visualization
+# ---------------------------------------------
+
+plt.figure(figsize=(6, 4))
+sns.boxplot(y=filtered_df['Price'])
+plt.title(f'Price Distribution of {product_name}')
+plt.ylabel('Price')
+plt.show()
+
+# ---------------------------------------------
+# End of Project
+# ---------------------------------------------
